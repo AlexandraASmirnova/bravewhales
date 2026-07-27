@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "swim-school-flyer",
+  "compatibility_date": "2026-07-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "september2026"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}

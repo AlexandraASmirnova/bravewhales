@@ -1,0 +1,13 @@
+{
+  "name": "bravewhales-flyer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Brave Whales Swimming School flyer page",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}

@@ -24,7 +24,7 @@ test.describe('Brave Whales flyer page', () => {
     const group = page.locator('.pcard', { hasText: 'GROUP' });
     await expect(group).toContainText('small group lesson');
     await expect(group).toContainText('$80');
-    await expect(group).toContainText('/1hr');
+    await expect(group).toContainText('/ 1hr');
     await expect(group.locator('.pcard-alt')).toHaveCount(0);
   });
 
@@ -32,7 +32,7 @@ test.describe('Brave Whales flyer page', () => {
     const priv = page.locator('.pcard', { hasText: 'PRIVATE' }).first();
     await expect(priv).toContainText('1:1 coaching');
     await expect(priv).toContainText('$200');
-    await expect(priv).toContainText('/1hr');
+    await expect(priv).toContainText('/ 1hr');
     await expect(priv.locator('.pcard-alt')).toContainText('$120');
     await expect(priv.locator('.pcard-alt')).toContainText('/ 30min');
   });
@@ -41,7 +41,7 @@ test.describe('Brave Whales flyer page', () => {
     const semi = page.locator('.pcard', { hasText: 'SEMI-PRIVATE' });
     await expect(semi).toContainText('2 swimmers');
     await expect(semi).toContainText('$300');
-    await expect(semi).toContainText('/1hr');
+    await expect(semi).toContainText('/ 1hr');
     await expect(semi.locator('.pcard-alt')).toContainText('$160');
     await expect(semi.locator('.pcard-alt')).toContainText('/ 30min');
   });

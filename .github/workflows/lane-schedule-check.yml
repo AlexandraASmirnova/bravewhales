@@ -1,0 +1,41 @@
+name: Lane schedule check
+
+on:
+  schedule:
+    # 5:30am Pacific lands at two different UTC times depending on DST.
+    # Both fire every day; check_schedule.py only does the real check on
+    # whichever one currently works out to ~5:xxam Pacific, and no-ops on
+    # the other. This keeps the job correct year-round with plain cron.
+    - cron: "30 12 * * *"  # 5:30am PDT (UTC-7, roughly Mar-Nov)
+    - cron: "30 13 * * *"  # 5:30am PST (UTC-8, roughly Nov-Mar)
+  workflow_dispatch:
+    inputs:
+      check_date:
+        description: "Date to check (YYYY-MM-DD). Leave blank for today."
+        required: false
+      force_run:
+        description: "Run the check even if it's not ~5:30am Pacific right now"
+        type: boolean
+        default: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r lane-schedule-monitor/requirements.txt
+
+      - name: Run lane schedule check
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+          CHECK_DATE: ${{ github.event.inputs.check_date }}
+          FORCE_RUN: ${{ github.event.inputs.force_run }}
+        run: python lane-schedule-monitor/check_schedule.py

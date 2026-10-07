@@ -133,7 +133,13 @@ def load_rules() -> list[dict]:
 
 
 def matching_lanes(events: list[dict], area_index: dict, rule: dict) -> list[dict]:
-    """Events matching rule's text/time/pool, each annotated with its lane count."""
+    """Events matching rule's text/pool, and whose time *covers* the rule's
+    window, each annotated with its lane count.
+
+    A booking doesn't have to start/end exactly on the rule's times: e.g. a
+    single 11:00-13:00 booking fully covers both an "11:00-12:00" rule and a
+    "12:00-13:00" rule, and should satisfy both.
+    """
     match_text = rule.get("match_text", "Brave Whales").lower()
     pool = rule.get("pool", "main")
     matches = []
@@ -142,7 +148,7 @@ def matching_lanes(events: list[dict], area_index: dict, rule: dict) -> list[dic
         desc = a.get("desc") or ""
         if match_text not in desc.lower():
             continue
-        if a["start"][11:16] != rule["start_time"] or a["end"][11:16] != rule["end_time"]:
+        if a["start"][11:16] > rule["start_time"] or a["end"][11:16] < rule["end_time"]:
             continue
         area = area_index.get(str(a["resource_area_id"]))
         if not area or area["pool"] != pool or not area["lanes"]:

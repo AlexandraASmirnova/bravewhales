@@ -15,5 +15,109 @@
     "lane_count": 2,
     "pool": "main",
     "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Tuesday",
+    "start_time": "06:30",
+    "end_time": "07:30",
+    "lane_count": 1,
+    "pool": "small",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Wednesday",
+    "start_time": "20:30",
+    "end_time": "21:30",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Thursday",
+    "start_time": "20:30",
+    "end_time": "21:30",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Saturday",
+    "start_time": "16:00",
+    "end_time": "17:00",
+    "lane_count": 1,
+    "pool": "small",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Saturday",
+    "start_time": "18:00",
+    "end_time": "19:00",
+    "lane_count": 3,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Saturday",
+    "start_time": "19:00",
+    "end_time": "20:00",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Saturday",
+    "start_time": "20:00",
+    "end_time": "21:00",
+    "lane_count": 1,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "11:00",
+    "end_time": "12:00",
+    "lane_count": 1,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "12:00",
+    "end_time": "13:00",
+    "lane_count": 1,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "13:00",
+    "end_time": "14:00",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "18:00",
+    "end_time": "19:00",
+    "lane_count": 3,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "19:00",
+    "end_time": "20:00",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
+  },
+  {
+    "weekday": "Sunday",
+    "start_time": "20:00",
+    "end_time": "21:00",
+    "lane_count": 1,
+    "pool": "main",
+    "match_text": "Brave Whales"
   }
 ]

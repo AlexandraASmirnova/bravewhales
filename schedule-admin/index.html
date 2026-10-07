@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lane Schedule Admin — Brave Whales</title>
+<style>
+  :root {
+    --navy-dark: #0b2e52;
+    --navy: #1a3a70;
+    --blue: #2d5a7b;
+    --blue-light: #e6f7fb;
+    --ink: #12303d;
+    --muted: #5a6b7a;
+    --ok: #1a7f37;
+    --ok-bg: #e9f7ee;
+    --err: #b3261e;
+    --err-bg: #fdecea;
+    --border: #d7e4ec;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #eef6fb;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--navy);
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    margin: 0 0 0.25rem;
+  }
+  .subtitle { color: var(--muted); margin: 0 0 1.75rem; font-size: 0.95rem; }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 10px rgba(11,46,82,0.08);
+    margin-bottom: 1.5rem;
+  }
+  .card h2 {
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin: 0 0 0.9rem;
+  }
+  details.card { padding: 0; }
+  details.card > summary {
+    cursor: pointer;
+    padding: 1.1rem 1.5rem;
+    font-weight: 600;
+    color: var(--navy);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  details.card > summary::-webkit-details-marker { display: none; }
+  details.card > summary .chev { transition: transform 0.15s; color: var(--muted); }
+  details.card[open] > summary .chev { transform: rotate(90deg); }
+  details.card .details-body { padding: 0 1.5rem 1.4rem; }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: var(--err-bg);
+    color: var(--err);
+  }
+  .status-pill.connected { background: var(--ok-bg); color: var(--ok); }
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--blue); margin: 0.9rem 0 0.3rem; }
+  label:first-child { margin-top: 0; }
+  input[type=text], input[type=password], input[type=time], input[type=number], select {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+  }
+  input:focus, select:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .help { font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
+  .help a { color: var(--blue); }
+  .row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+  .row > div { flex: 1 1 140px; }
+  button {
+    font: inherit;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-dark); }
+  .btn-secondary { background: var(--blue-light); color: var(--navy); }
+  .btn-secondary:hover { background: #d7edf5; }
+  .btn-danger { background: var(--err-bg); color: var(--err); }
+  .btn-danger:hover { background: #fadcd9; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .actions { display: flex; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:last-child td { border-bottom: none; }
+  .pool-tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+  .pool-main { background: #e6f0fb; color: var(--navy); }
+  .pool-small { background: #e6f7fb; color: var(--blue); }
+  .row-actions button { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+  .empty { color: var(--muted); font-style: italic; padding: 1rem 0; }
+  #toast {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy-dark);
+    color: #fff;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    max-width: 90vw;
+  }
+  #toast.show { opacity: 1; }
+  #toast.err { background: var(--err); }
+  #toast.ok { background: var(--ok); }
+  code { background: var(--blue-light); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Lane Schedule — Admin</h1>
+  <p class="subtitle">Manage the expected lane bookings that <code>lane-schedule-monitor</code> checks every morning.</p>
+
+  <details class="card" id="connect-card">
+    <summary>
+      <span>Connect to GitHub <span id="status-pill" class="status-pill">not connected</span></span>
+      <span class="chev">▸</span>
+    </summary>
+    <div class="details-body">
+      <p class="help">
+        This page edits <code>lane-schedule-monitor/schedule_rules.json</code> directly in the
+        <code>AlexandraASmirnova/bravewhales</code> repo via GitHub's API, from your browser — there's no server involved.
+        To save changes you need a GitHub <strong>Personal Access Token</strong> with write access to this one repo.
+        It's saved only in this browser's local storage and sent only to <code>api.github.com</code>.
+      </p>
+      <p class="help">
+        Create one at
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>
+        → Repository access: <em>Only select repositories</em> → <em>bravewhales</em> → Permissions →
+        <em>Contents: Read and write</em>. Then paste it below.
+      </p>
+      <label for="token-input">GitHub token</label>
+      <input type="password" id="token-input" placeholder="github_pat_…" autocomplete="off">
+      <div class="actions">
+        <button class="btn-primary" id="save-token-btn">Save token</button>
+        <button class="btn-secondary" id="clear-token-btn">Forget token</button>
+      </div>
+    </div>
+  </details>
+
+  <div class="card">
+    <h2>Expected weekly schedule</h2>
+    <table id="rules-table">
+      <thead>
+        <tr>
+          <th>Weekday</th><th>Time</th><th>Pool</th><th>Lanes</th><th>Label</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="rules-tbody"></tbody>
+    </table>
+    <p class="empty" id="empty-msg" hidden>No rules yet — add one below.</p>
+    <div class="actions">
+      <button class="btn-secondary" id="reload-btn">Reload from GitHub</button>
+      <button class="btn-primary" id="save-btn" disabled>Save changes to GitHub</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="form-title">Add a rule</h2>
+    <div class="row">
+      <div>
+        <label for="f-weekday">Weekday</label>
+        <select id="f-weekday">
+          <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+          <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-start">Start time</label>
+        <input type="time" id="f-start" value="20:30">
+      </div>
+      <div>
+        <label for="f-end">End time</label>
+        <input type="time" id="f-end" value="21:30">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="f-pool">Pool</label>
+        <select id="f-pool">
+          <option value="main">Main Pool</option>
+          <option value="small">Small Pool</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-lanes">Number of lanes</label>
+        <input type="number" id="f-lanes" min="1" max="6" value="3">
+      </div>
+      <div style="flex: 2 1 220px;">
+        <label for="f-label">Label (optional)</label>
+        <input type="text" id="f-label" placeholder="e.g. Monday evening practice">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="add-btn">Add rule</button>
+      <button class="btn-secondary" id="cancel-edit-btn" hidden>Cancel edit</button>
+    </div>
+    <p class="help">Changes here only take effect once you click <strong>Save changes to GitHub</strong> above.</p>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+  const OWNER = 'AlexandraASmirnova';
+  const REPO = 'bravewhales';
+  const PATH = 'lane-schedule-monitor/schedule_rules.json';
+  const BRANCH = 'main';
+  const TOKEN_KEY = 'bravewhales_gh_token';
+  const API_BASE = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+
+  let rules = [];
+  let currentSha = null;
+  let editingIndex = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function toast(msg, kind) {
+    const el = $('toast');
+    el.textContent = msg;
+    el.className = 'show' + (kind ? ' ' + kind : '');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { el.className = ''; }, 4000);
+  }
+
+  function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+
+  function updateConnectUI() {
+    const token = getToken();
+    const pill = $('status-pill');
+    if (token) {
+      pill.textContent = 'connected';
+      pill.classList.add('connected');
+      $('token-input').value = token;
+      $('save-btn').disabled = false;
+    } else {
+      pill.textContent = 'not connected (read-only)';
+      pill.classList.remove('connected');
+      $('save-btn').disabled = true;
+    }
+  }
+
+  function b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      (_, p1) => String.fromCharCode('0x' + p1)));
+  }
+  function b64DecodeUnicode(str) {
+    return decodeURIComponent(atob(str).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  }
+
+  async function ghRequest(method, body) {
+    const token = getToken();
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const opts = { method, headers };
+    if (body) {
+      headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(`${API_BASE}?ref=${BRANCH}`, opts);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `GitHub API error ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async function loadRules() {
+    try {
+      const data = await ghRequest('GET');
+      currentSha = data.sha;
+      rules = JSON.parse(b64DecodeUnicode(data.content));
+      renderRules();
+      toast('Loaded current schedule from GitHub.', 'ok');
+    } catch (e) {
+      toast('Failed to load schedule: ' + e.message, 'err');
+    }
+  }
+
+  function timeLabel(start, end) {
+    const fmt = (t) => {
+      const [h, m] = t.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = ((h + 11) % 12) + 1;
+      return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+    };
+    return `${fmt(start)}–${fmt(end)}`;
+  }
+
+  function renderRules() {
+    const tbody = $('rules-tbody');
+    tbody.innerHTML = '';
+    $('empty-msg').hidden = rules.length !== 0;
+    rules.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      const poolClass = r.pool === 'small' ? 'pool-small' : 'pool-main';
+      const poolLabel = r.pool === 'small' ? 'Small Pool' : 'Main Pool';
+      tr.innerHTML = `
+        <td>${r.weekday}</td>
+        <td>${timeLabel(r.start_time, r.end_time)}</td>
+        <td><span class="pool-tag ${poolClass}">${poolLabel}</span></td>
+        <td>${r.lane_count}</td>
+        <td>${r.label ? r.label : ''}</td>
+        <td class="row-actions">
+          <button class="btn-secondary" data-edit="${i}">Edit</button>
+          <button class="btn-danger" data-del="${i}">Delete</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-edit]').forEach(btn =>
+      btn.addEventListener('click', () => startEdit(Number(btn.dataset.edit))));
+    tbody.querySelectorAll('[data-del]').forEach(btn =>
+      btn.addEventListener('click', () => deleteRule(Number(btn.dataset.del))));
+  }
+
+  function startEdit(i) {
+    editingIndex = i;
+    const r = rules[i];
+    $('f-weekday').value = r.weekday;
+    $('f-start').value = r.start_time;
+    $('f-end').value = r.end_time;
+    $('f-pool').value = r.pool || 'main';
+    $('f-lanes').value = r.lane_count;
+    $('f-label').value = r.label || '';
+    $('form-title').textContent = 'Edit rule';
+    $('add-btn').textContent = 'Save rule';
+    $('cancel-edit-btn').hidden = false;
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    editingIndex = null;
+    $('f-weekday').value = 'Monday';
+    $('f-start').value = '20:30';
+    $('f-end').value = '21:30';
+    $('f-pool').value = 'main';
+    $('f-lanes').value = 3;
+    $('f-label').value = '';
+    $('form-title').textContent = 'Add a rule';
+    $('add-btn').textContent = 'Add rule';
+    $('cancel-edit-btn').hidden = true;
+  }
+
+  function deleteRule(i) {
+    if (!confirm(`Delete the ${rules[i].weekday} ${timeLabel(rules[i].start_time, rules[i].end_time)} rule?`)) return;
+    rules.splice(i, 1);
+    renderRules();
+    if (editingIndex === i) resetForm();
+  }
+
+  function addOrSaveRule() {
+    const start = $('f-start').value, end = $('f-end').value;
+    const lanes = Number($('f-lanes').value);
+    if (!start || !end) { toast('Start and end time are required.', 'err'); return; }
+    if (start >= end) { toast('End time must be after start time.', 'err'); return; }
+    if (!lanes || lanes < 1) { toast('Number of lanes must be at least 1.', 'err'); return; }
+
+    const rule = {
+      weekday: $('f-weekday').value,
+      start_time: start,
+      end_time: end,
+      lane_count: lanes,
+      pool: $('f-pool').value,
+      match_text: 'Brave Whales',
+      label: $('f-label').value.trim() || undefined,
+    };
+
+    if (editingIndex !== null) {
+      rules[editingIndex] = rule;
+    } else {
+      rules.push(rule);
+    }
+    renderRules();
+    resetForm();
+    toast('Rule staged. Click "Save changes to GitHub" to publish it.', 'ok');
+  }
+
+  async function saveToGitHub() {
+    const token = getToken();
+    if (!token) { toast('Paste a GitHub token first (Connect to GitHub, above).', 'err'); return; }
+    $('save-btn').disabled = true;
+    $('save-btn').textContent = 'Saving…';
+    try {
+      const content = b64EncodeUnicode(JSON.stringify(rules, null, 2) + '\n');
+      const result = await ghRequest('PUT', {
+        message: 'Update schedule_rules.json via admin UI',
+        content,
+        sha: currentSha,
+        branch: BRANCH,
+      });
+      currentSha = result.content.sha;
+      toast('Saved! The next scheduled run will use this schedule.', 'ok');
+    } catch (e) {
+      toast('Save failed: ' + e.message, 'err');
+    } finally {
+      $('save-btn').disabled = false;
+      $('save-btn').textContent = 'Save changes to GitHub';
+    }
+  }
+
+  $('save-token-btn').addEventListener('click', () => {
+    const v = $('token-input').value.trim();
+    if (v) { localStorage.setItem(TOKEN_KEY, v); updateConnectUI(); toast('Token saved in this browser.', 'ok'); }
+  });
+  $('clear-token-btn').addEventListener('click', () => {
+    localStorage.removeItem(TOKEN_KEY);
+    $('token-input').value = '';
+    updateConnectUI();
+    toast('Token forgotten.', 'ok');
+  });
+  $('reload-btn').addEventListener('click', loadRules);
+  $('save-btn').addEventListener('click', saveToGitHub);
+  $('add-btn').addEventListener('click', addOrSaveRule);
+  $('cancel-edit-btn').addEventListener('click', resetForm);
+
+  updateConnectUI();
+  loadRules();
+</script>
+</body>
+</html>

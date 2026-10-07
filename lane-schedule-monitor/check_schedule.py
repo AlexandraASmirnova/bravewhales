@@ -2,21 +2,31 @@
 """
 Brave Whales lane-schedule monitor.
 
-Checks the DaySmart Recreation calendar for "today" at Juanita Aquatics
-Center and compares the lanes booked under "Brave Whales" against the
-expected schedule in schedule_rules.json. If anything doesn't match
-(missing lanes, wrong lane count, or wrong time) -- or if the check itself
-fails -- an email is sent to NOTIFY_EMAIL.
+Checks the DaySmart Recreation calendar for Juanita Aquatics Center, for
+today through the next 6 days (a full week ahead), and compares the lanes
+booked under "Brave Whales" against the expected schedule in
+schedule_rules.json. If anything doesn't match (missing lanes, wrong lane
+count, wrong pool, or wrong time) -- or if the check itself fails -- a
+single summary email is sent via Web3Forms.
 
 No login/password is needed: the calendar page at
   https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar
 is a web app that reads from a public, unauthenticated JSON API
 (api.daysmartrecreation.com). This script talks to that API directly.
 
+DaySmart sometimes books several adjacent lanes as a single event on a
+"combined" resource area (e.g. "Main Pool Lanes 2-4" is one event worth 3
+lanes), rather than one event per lane -- so lane counts are computed from
+the resource-area's name, not just by counting matching events.
+
 Environment variables:
-  GMAIL_USER            Gmail address to send FROM (required to actually email)
-  GMAIL_APP_PASSWORD    Gmail App Password for that address (required to actually email)
-  NOTIFY_EMAIL           Who to notify (default: smirnovaae@gmail.com)
+  WEB3FORMS_ACCESS_KEY  Web3Forms access key to send mail with (defaults to
+                         the same public key already used by this repo's
+                         contact form in 2026-2027/index.html, which
+                         delivers to the email that key is registered to)
+  NOTIFY_EMAIL           Who the alert is addressed to, for display purposes
+                         only (default: smirnovaae@gmail.com) -- actual
+                         delivery address is controlled by the Web3Forms key
   CHECK_DATE             Override "today" with an explicit YYYY-MM-DD (for testing)
   FORCE_RUN               If "true", skip the "only run near 5:30am local" time guard
 """
@@ -25,11 +35,9 @@ from __future__ import annotations
 
 import json
 import os
-import smtplib
-import ssl
+import re
 import sys
-from datetime import date, datetime
-from email.mime.text import MIMEText
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -37,47 +45,84 @@ import requests
 
 # ---- Configuration --------------------------------------------------------
 
-API_BASE = "https://api.daysmartrecreation.com/v1/events"
+EVENTS_API = "https://api.daysmartrecreation.com/v1/events"
+RESOURCE_AREAS_API = "https://api.daysmartrecreation.com/v1/resource-areas"
 COMPANY = "waveaquatics"
 FACILITY_ID = 1  # Juanita Aquatics Center ("location=1" in the calendar URL)
+RENTAL_RESOURCE_ID = 8  # "Juanita Rentals" -- the resource that lane bookings live under
 POOL_TIMEZONE = "America/Los_Angeles"
+LOOKAHEAD_DAYS = 7  # today + the next 6 days
 
 RULES_FILE = Path(__file__).parent / "schedule_rules.json"
 
-NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", "smirnovaae@gmail.com")
-GMAIL_USER = os.environ.get("GMAIL_USER")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
+# `or` (not a dict default) because GitHub Actions sets env vars to "" for
+# unset secrets rather than leaving them unset.
+WEB3FORMS_ACCESS_KEY = os.environ.get("WEB3FORMS_ACCESS_KEY") or "aa8fd2da-7204-4819-a418-5bbe5706fe62"
+NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL") or "smirnovaae@gmail.com"
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+SINGLE_LANE_RE = re.compile(r"^(Main|Small) Pool Lane (\d+)$")
+LANE_RANGE_RE = re.compile(r"^(Main|Small) Pool Lanes (\d+)-(\d+)$")
+FULL_POOL_RE = re.compile(r"^Full (Main|Small) Pool$")
 
 
 # ---- DaySmart API ----------------------------------------------------------
 
-def fetch_events_for_date(target_date: date) -> list[dict]:
-    """Fetch every calendar event on target_date (all pages)."""
-    events: list[dict] = []
+def _get_all_pages(url: str, params: dict) -> list[dict]:
+    items: list[dict] = []
     page = 1
     while True:
-        params = {
+        resp = requests.get(url, params={**params, "page[number]": page, "page[size]": 100}, timeout=30)
+        resp.raise_for_status()
+        payload = resp.json()
+        items.extend(payload["data"])
+        if page >= payload["meta"]["page"]["last-page"]:
+            break
+        page += 1
+    return items
+
+
+def fetch_events_for_range(start_date: date, end_date: date) -> list[dict]:
+    """Fetch every calendar event between start_date and end_date (inclusive)."""
+    return _get_all_pages(
+        EVENTS_API,
+        {
             "company": COMPANY,
             "sort": "start",
-            "page[size]": 100,
-            "page[number]": page,
-            "filter[start__gte]": f"{target_date} 00:00:00",
-            "filter[start__lte]": f"{target_date} 23:59:59",
+            "filter[start__gte]": f"{start_date} 00:00:00",
+            "filter[start__lte]": f"{end_date} 23:59:59",
             "filter[resource.facility.my_sam_visible]": "true",
             "filter[eventType.code__not]": "L",
             "filter[resource.facility.id]": FACILITY_ID,
-        }
-        resp = requests.get(API_BASE, params=params, timeout=30)
-        resp.raise_for_status()
-        payload = resp.json()
-        events.extend(payload["data"])
-        last_page = payload["meta"]["page"]["last-page"]
-        if page >= last_page:
-            break
-        page += 1
-    return events
+        },
+    )
+
+
+def fetch_resource_area_index() -> dict[str, dict]:
+    """Map resource-area id -> {name, pool ('main'/'small'/None), lanes (int/None)}."""
+    areas = _get_all_pages(RESOURCE_AREAS_API, {"company": COMPANY, "filter[resource_id]": RENTAL_RESOURCE_ID})
+
+    single_lane_count = {"main": 0, "small": 0}
+    for area in areas:
+        m = SINGLE_LANE_RE.match(area["attributes"]["name"])
+        if m:
+            single_lane_count[m.group(1).lower()] += 1
+
+    index: dict[str, dict] = {}
+    for area in areas:
+        name = area["attributes"]["name"]
+        pool = None
+        lanes = None
+        if m := SINGLE_LANE_RE.match(name):
+            pool, lanes = m.group(1).lower(), 1
+        elif m := LANE_RANGE_RE.match(name):
+            pool, lanes = m.group(1).lower(), int(m.group(3)) - int(m.group(2)) + 1
+        elif m := FULL_POOL_RE.match(name):
+            pool = m.group(1).lower()
+            lanes = single_lane_count[pool]
+        index[area["id"]] = {"name": name, "pool": pool, "lanes": lanes}
+    return index
 
 
 # ---- Rule checking ----------------------------------------------------------
@@ -87,43 +132,43 @@ def load_rules() -> list[dict]:
         return json.load(f)
 
 
-def rules_for_weekday(rules: list[dict], weekday_name: str) -> list[dict]:
-    return [r for r in rules if r["weekday"] == weekday_name]
-
-
-def matching_lanes(events: list[dict], match_text: str, start_time: str, end_time: str) -> list[dict]:
-    """Distinct lanes whose description matches match_text and whose start/end
-    exactly equal the expected window (HH:MM, 24h, facility-local time)."""
-    lanes = []
+def matching_lanes(events: list[dict], area_index: dict, rule: dict) -> list[dict]:
+    """Events matching rule's text/time/pool, each annotated with its lane count."""
+    match_text = rule.get("match_text", "Brave Whales").lower()
+    pool = rule.get("pool", "main")
+    matches = []
     for ev in events:
         a = ev["attributes"]
         desc = a.get("desc") or ""
-        if match_text.lower() not in desc.lower():
+        if match_text not in desc.lower():
             continue
-        if a["start"][11:16] == start_time and a["end"][11:16] == end_time:
-            lanes.append(
-                {
-                    "resource_area_id": a["resource_area_id"],
-                    "desc": desc,
-                    "start": a["start"],
-                    "end": a["end"],
-                }
-            )
-    return lanes
+        if a["start"][11:16] != rule["start_time"] or a["end"][11:16] != rule["end_time"]:
+            continue
+        area = area_index.get(str(a["resource_area_id"]))
+        if not area or area["pool"] != pool or not area["lanes"]:
+            continue
+        matches.append(
+            {
+                "resource_area_id": a["resource_area_id"],
+                "area_name": area["name"],
+                "lanes": area["lanes"],
+                "desc": desc,
+                "start": a["start"],
+                "end": a["end"],
+            }
+        )
+    return matches
 
 
-def check_rule(events: list[dict], rule: dict) -> dict:
-    lanes = matching_lanes(
-        events,
-        rule.get("match_text", "Brave Whales"),
-        rule["start_time"],
-        rule["end_time"],
-    )
+def check_rule(events_on_date: list[dict], area_index: dict, rule: dict, target_date: date) -> dict:
+    matches = matching_lanes(events_on_date, area_index, rule)
+    actual = sum(m["lanes"] for m in matches)
     expected = rule["lane_count"]
-    actual = len(lanes)
     return {
+        "date": target_date,
+        "weekday": WEEKDAYS[target_date.weekday()],
         "rule": rule,
-        "lanes_found": lanes,
+        "matches": matches,
         "expected_count": expected,
         "actual_count": actual,
         "ok": actual == expected,
@@ -132,23 +177,20 @@ def check_rule(events: list[dict], rule: dict) -> dict:
 
 # ---- Notification -----------------------------------------------------------
 
-def send_email(subject: str, body: str) -> None:
-    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
-        print("GMAIL_USER / GMAIL_APP_PASSWORD not set -- cannot send email.", file=sys.stderr)
-        print("---- Email that would have been sent ----", file=sys.stderr)
-        print(f"Subject: {subject}\n\n{body}", file=sys.stderr)
-        return
-
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = GMAIL_USER
-    msg["To"] = NOTIFY_EMAIL
-
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-        server.sendmail(GMAIL_USER, [NOTIFY_EMAIL], msg.as_string())
-    print(f"Notification email sent to {NOTIFY_EMAIL}.")
+def send_email(subject: str, message: str) -> None:
+    payload = {
+        "access_key": WEB3FORMS_ACCESS_KEY,
+        "subject": subject,
+        "message": message,
+        "email": NOTIFY_EMAIL,
+        "from_name": "Lane Schedule Monitor",
+    }
+    resp = requests.post("https://api.web3forms.com/submit", json=payload, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data.get("success"):
+        raise RuntimeError(f"Web3Forms reported failure: {data}")
+    print("Notification email sent via Web3Forms.")
 
 
 def calendar_url(target_date: date) -> str:
@@ -175,64 +217,82 @@ def main() -> None:
         )
         return
 
-    if os.environ.get("CHECK_DATE"):
-        today = date.fromisoformat(os.environ["CHECK_DATE"])
-    else:
-        today = now_local.date()
-    weekday_name = WEEKDAYS[today.weekday()]
+    start_date = date.fromisoformat(os.environ["CHECK_DATE"]) if os.environ.get("CHECK_DATE") else now_local.date()
+    end_date = start_date + timedelta(days=LOOKAHEAD_DAYS - 1)
+    week_dates = [start_date + timedelta(days=i) for i in range(LOOKAHEAD_DAYS)]
 
     rules = load_rules()
-    todays_rules = rules_for_weekday(rules, weekday_name)
+    rules_by_weekday: dict[str, list[dict]] = {}
+    for r in rules:
+        rules_by_weekday.setdefault(r["weekday"], []).append(r)
 
-    if not todays_rules:
-        print(f"No rules configured for {weekday_name} ({today}). Nothing to check.")
+    if not any(rules_by_weekday.get(WEEKDAYS[d.weekday()]) for d in week_dates):
+        print(f"No rules configured for {start_date}..{end_date}. Nothing to check.")
         return
 
     try:
-        events = fetch_events_for_date(today)
+        events = fetch_events_for_range(start_date, end_date)
+        area_index = fetch_resource_area_index()
     except Exception as exc:  # noqa: BLE001 - we want to email on any failure
         send_email(
-            f"[Brave Whales] Lane schedule check FAILED for {today}",
+            f"[Brave Whales] Lane schedule check FAILED ({start_date} - {end_date})",
             "The automated lane-schedule check could not reach the DaySmart "
-            f"calendar API for {today} ({weekday_name}).\n\nError: {exc}\n\n"
-            f"Please check manually: {calendar_url(today)}",
+            f"calendar API for {start_date} through {end_date}.\n\nError: {exc}\n\n"
+            f"Please check manually: {calendar_url(start_date)}",
         )
         raise
 
-    results = [check_rule(events, rule) for rule in todays_rules]
+    events_by_date: dict[date, list[dict]] = {d: [] for d in week_dates}
+    for ev in events:
+        ev_date = date.fromisoformat(ev["attributes"]["start"][:10])
+        if ev_date in events_by_date:
+            events_by_date[ev_date].append(ev)
+
+    results = []
+    for d in week_dates:
+        for rule in rules_by_weekday.get(WEEKDAYS[d.weekday()], []):
+            results.append(check_rule(events_by_date[d], area_index, rule, d))
+
     problems = [r for r in results if not r["ok"]]
 
-    print(f"Checked {len(todays_rules)} rule(s) for {weekday_name} {today}:")
+    print(f"Checked {len(results)} rule-day(s) from {start_date} to {end_date}:")
     for r in results:
         status = "OK" if r["ok"] else "MISMATCH"
+        rule = r["rule"]
         print(
-            f"  [{status}] {r['rule']['start_time']}-{r['rule']['end_time']}: "
-            f"expected {r['expected_count']} lane(s), found {r['actual_count']}"
+            f"  [{status}] {r['date']} ({r['weekday']}) {rule['start_time']}-{rule['end_time']} "
+            f"{rule.get('pool', 'main')} pool: expected {r['expected_count']} lane(s), "
+            f"found {r['actual_count']}"
         )
 
     if not problems:
-        print("All rules matched. No email sent.")
+        print("All rules matched for the week ahead. No email sent.")
         return
 
-    lines = [f"The Brave Whales lane schedule for {weekday_name}, {today} does not match what's expected.", ""]
+    lines = [
+        f"The Brave Whales lane schedule for {start_date} through {end_date} "
+        "has one or more mismatches:",
+        "",
+    ]
     for r in problems:
         rule = r["rule"]
         label = f" ({rule['label']})" if rule.get("label") else ""
         lines.append(
-            f"- {rule['start_time']}-{rule['end_time']}{label}: expected "
-            f"{r['expected_count']} lane(s), found {r['actual_count']}."
+            f"- {r['date']} ({r['weekday']}) {rule['start_time']}-{rule['end_time']}{label}, "
+            f"{rule.get('pool', 'main')} pool: expected {r['expected_count']} lane(s), "
+            f"found {r['actual_count']}."
         )
-        if r["lanes_found"]:
+        if r["matches"]:
             lines.append("  Lanes currently booked:")
-            for lane in r["lanes_found"]:
-                lines.append(f"    - resource area {lane['resource_area_id']}: {lane['desc']}")
+            for m in r["matches"]:
+                lines.append(f"    - {m['area_name']} ({m['lanes']} lane(s)): {m['desc']}")
         else:
             lines.append("  No matching booking was found at all for this time slot.")
+        lines.append(f"  Check/fix it here: {calendar_url(r['date'])}")
         lines.append("")
-    lines.append(f"Check/fix it here: {calendar_url(today)}")
 
     send_email(
-        f"[Brave Whales] Lane schedule MISMATCH for {today} ({weekday_name})",
+        f"[Brave Whales] Lane schedule MISMATCH -- {len(problems)} issue(s) in the week ahead",
         "\n".join(lines),
     )
 

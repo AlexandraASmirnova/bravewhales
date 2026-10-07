@@ -33,8 +33,9 @@ jobs:
 
       - name: Run lane schedule check
         env:
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          # Optional overrides -- the script already has working defaults
+          # (the same Web3Forms key this repo's contact form uses).
+          WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
           CHECK_DATE: ${{ github.event.inputs.check_date }}
           FORCE_RUN: ${{ github.event.inputs.force_run }}

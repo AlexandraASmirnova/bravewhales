@@ -4,6 +4,7 @@
     "start_time": "20:30",
     "end_time": "21:30",
     "lane_count": 3,
+    "pool": "main",
     "match_text": "Brave Whales",
     "label": "Monday evening practice"
   }

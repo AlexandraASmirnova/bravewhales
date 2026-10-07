@@ -7,5 +7,13 @@
     "pool": "main",
     "match_text": "Brave Whales",
     "label": "Monday evening practice"
+  },
+  {
+    "weekday": "Tuesday",
+    "start_time": "20:30",
+    "end_time": "21:30",
+    "lane_count": 2,
+    "pool": "main",
+    "match_text": "Brave Whales"
   }
 ]

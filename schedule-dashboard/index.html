@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lane Schedule Dashboard — Brave Whales</title>
+<style>
+  :root {
+    --navy-dark: #0b2e52;
+    --navy: #1a3a70;
+    --blue: #2d5a7b;
+    --blue-light: #e6f7fb;
+    --ink: #12303d;
+    --muted: #5a6b7a;
+    --ok: #1a7f37;
+    --ok-bg: #e9f7ee;
+    --err: #b3261e;
+    --err-bg: #fdecea;
+    --border: #d7e4ec;
+    --pending: #c7d4de;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #eef6fb;
+    line-height: 1.5;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  .topnav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--navy);
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    margin: 0 0 0.25rem;
+  }
+  .topnav a { color: var(--blue); font-size: 0.85rem; font-weight: 600; text-decoration: none; }
+  .topnav a:hover { text-decoration: underline; }
+  .subtitle { color: var(--muted); margin: 0 0 1.75rem; font-size: 0.95rem; }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 10px rgba(11,46,82,0.08);
+    margin-bottom: 1.5rem;
+  }
+  .card h2 { font-size: 1.05rem; color: var(--navy); margin: 0 0 0.9rem; }
+
+  .stats { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .stat {
+    flex: 1 1 150px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 10px rgba(11,46,82,0.08);
+  }
+  .stat .num { font-family: Georgia, serif; font-size: 1.7rem; color: var(--navy); line-height: 1; }
+  .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat.warn .num { color: var(--err); }
+
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+  .cal-head button {
+    background: var(--blue-light); color: var(--navy); border: none; border-radius: 8px;
+    padding: 0.4rem 0.8rem; font-weight: 700; cursor: pointer; font-size: 1rem;
+  }
+  .cal-head button:hover { background: #d7edf5; }
+  .cal-month { font-weight: 700; color: var(--navy); font-size: 1.05rem; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-dow { text-align: center; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; padding-bottom: 2px; }
+  .cal-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: default;
+    background: #f3f8fb;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+  .cal-cell.empty { visibility: hidden; }
+  .cal-cell.ok { background: var(--ok-bg); color: var(--ok); }
+  .cal-cell.mismatch { background: var(--err-bg); color: var(--err); cursor: pointer; }
+  .cal-cell.pending { background: #fff; border: 1px dashed var(--pending); color: var(--pending); }
+  .cal-cell.ok, .cal-cell.mismatch { cursor: pointer; }
+  .cal-cell.selected { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .cal-legend { display: flex; gap: 1.1rem; margin-top: 0.9rem; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .swatch.ok { background: var(--ok-bg); border: 1px solid var(--ok); }
+  .swatch.mismatch { background: var(--err-bg); border: 1px solid var(--err); }
+  .swatch.pending { background: #fff; border: 1px dashed var(--pending); }
+  .swatch.none { background: #f3f8fb; }
+
+  #day-detail { margin-top: 1rem; }
+  #day-detail h3 { margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--navy); }
+  .rule-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .rule-row:last-child { border-bottom: none; }
+  .rule-row .tag { font-weight: 700; }
+  .rule-row .tag.ok { color: var(--ok); }
+  .rule-row .tag.bad { color: var(--err); }
+
+  .trend-bars { display: flex; gap: 6px; height: 90px; margin-top: 0.6rem; }
+  .trend-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+  .trend-bar .bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--border); position: relative; }
+  .trend-bar .bar.has-mismatch { background: var(--err); }
+  .trend-bar .wk-lbl { font-size: 0.65rem; color: var(--muted); }
+
+  .issues-list { list-style: none; margin: 0; padding: 0; }
+  .issues-list li {
+    padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
+  }
+  .issues-list li:last-child { border-bottom: none; }
+  .issues-list .date { font-weight: 700; color: var(--navy); }
+  .issues-list a { color: var(--blue); font-size: 0.8rem; text-decoration: none; }
+  .issues-list a:hover { text-decoration: underline; }
+  .empty-note { color: var(--muted); font-style: italic; font-size: 0.88rem; }
+  .loading { color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <div class="topnav">
+    <div>
+      <h1>Lane Schedule — Dashboard</h1>
+      <p class="subtitle">Pass/fail history for Brave Whales' lane bookings at Juanita Aquatics Center.</p>
+    </div>
+    <a href="../schedule-admin/">Edit schedule →</a>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="loading">Loading…</div>
+  </div>
+
+  <div class="card">
+    <h2>Currently open issues</h2>
+    <div id="issues"><p class="loading">Loading…</p></div>
+  </div>
+
+  <div class="card">
+    <div class="cal-head">
+      <button id="prev-month" aria-label="Previous month">‹</button>
+      <span class="cal-month" id="cal-month-label"></span>
+      <button id="next-month" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><i class="swatch ok"></i> all lanes correct</span>
+      <span><i class="swatch mismatch"></i> mismatch found</span>
+      <span><i class="swatch pending"></i> not checked yet</span>
+      <span><i class="swatch none"></i> no practice scheduled</span>
+    </div>
+    <div id="day-detail"></div>
+  </div>
+
+  <div class="card">
+    <h2>Mismatches per week (last 10 weeks)</h2>
+    <div class="trend-bars" id="trend"></div>
+  </div>
+</main>
+
+<script>
+  const HISTORY_URL = 'https://raw.githubusercontent.com/AlexandraASmirnova/bravewhales/main/lane-schedule-monitor/history.json';
+  const RULES_URL = 'https://raw.githubusercontent.com/AlexandraASmirnova/bravewhales/main/lane-schedule-monitor/schedule_rules.json';
+  const WEEKDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+  let history = {};
+  let weekdaysWithRules = new Set();
+  let viewYear, viewMonth; // 0-indexed month
+  let selectedDate = null;
+
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2, '0');
+  const isoDate = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+
+  function fmtTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = ((h + 11) % 12) + 1;
+    return `${h12}:${pad(m)} ${ampm}`;
+  }
+
+  function dayStatus(dateStr) {
+    const entry = history[dateStr];
+    if (entry) return entry.rules.every(r => r.ok) ? 'ok' : 'mismatch';
+    const d = new Date(dateStr + 'T00:00:00');
+    const weekday = WEEKDAYS[(d.getDay() + 6) % 7];
+    return weekdaysWithRules.has(weekday) ? 'pending' : 'none';
+  }
+
+  async function loadData() {
+    const [histRes, rulesRes] = await Promise.all([
+      fetch(HISTORY_URL + '?t=' + Date.now()),
+      fetch(RULES_URL + '?t=' + Date.now()),
+    ]);
+    history = histRes.ok ? await histRes.json() : {};
+    const rules = rulesRes.ok ? await rulesRes.json() : [];
+    weekdaysWithRules = new Set(rules.map(r => r.weekday));
+  }
+
+  function renderStats() {
+    const dates = Object.keys(history);
+    let totalRules = 0, okRules = 0;
+    dates.forEach(d => history[d].rules.forEach(r => { totalRules++; if (r.ok) okRules++; }));
+    const passRate = totalRules ? Math.round((okRules / totalRules) * 100) : 0;
+    const mismatchDays = dates.filter(d => !history[d].rules.every(r => r.ok)).length;
+    const lastChecked = dates.length
+      ? dates.map(d => history[d].checked_at).sort().slice(-1)[0]
+      : null;
+
+    $('stats').innerHTML = `
+      <div class="stat"><div class="num">${dates.length}</div><div class="lbl">Days tracked</div></div>
+      <div class="stat"><div class="num">${passRate}%</div><div class="lbl">Pass rate (all-time)</div></div>
+      <div class="stat ${mismatchDays ? 'warn' : ''}"><div class="num">${mismatchDays}</div><div class="lbl">Days with a mismatch</div></div>
+      <div class="stat"><div class="num" style="font-size:1rem">${lastChecked ? new Date(lastChecked).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}) : '—'}</div><div class="lbl">Last checked</div></div>
+    `;
+  }
+
+  function renderIssues() {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const from = new Date(today); from.setDate(from.getDate() - 7);
+    const to = new Date(today); to.setDate(to.getDate() + 7);
+
+    const issues = Object.keys(history)
+      .filter(d => {
+        const dd = new Date(d + 'T00:00:00');
+        return dd >= from && dd <= to && !history[d].rules.every(r => r.ok);
+      })
+      .sort();
+
+    if (!issues.length) {
+      $('issues').innerHTML = '<p class="empty-note">No open mismatches in the surrounding two weeks. 🎉</p>';
+      return;
+    }
+
+    $('issues').innerHTML = '<ul class="issues-list">' + issues.map(d => {
+      const entry = history[d];
+      const bad = entry.rules.filter(r => !r.ok);
+      const details = bad.map(r =>
+        `${fmtTime(r.start_time)}–${fmtTime(r.end_time)} ${r.pool === 'small' ? 'Small' : 'Main'} Pool: expected ${r.expected}, found ${r.actual}`
+      ).join('; ');
+      return `<li><span class="date">${d} (${entry.weekday})</span> — ${details}
+        <br><a href="https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar?start=${d}&end=${d}&location=1" target="_blank" rel="noopener">View on DaySmart →</a></li>`;
+    }).join('') + '</ul>';
+  }
+
+  function renderCalendar() {
+    const first = new Date(viewYear, viewMonth, 1);
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const startOffset = (first.getDay() + 6) % 7; // Monday = 0
+
+    $('cal-month-label').textContent = first.toLocaleString([], { month: 'long', year: 'numeric' });
+
+    const dow = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+    let cells = '';
+    for (let i = 0; i < startOffset; i++) cells += '<div class="cal-cell empty"></div>';
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = isoDate(viewYear, viewMonth, day);
+      const status = dayStatus(dateStr);
+      const sel = dateStr === selectedDate ? ' selected' : '';
+      cells += `<div class="cal-cell ${status}${sel}" data-date="${dateStr}">${day}</div>`;
+    }
+    $('cal-grid').innerHTML = dow + cells;
+
+    $('cal-grid').querySelectorAll('.cal-cell[data-date]').forEach(el => {
+      el.addEventListener('click', () => {
+        selectedDate = el.dataset.date;
+        renderCalendar();
+        renderDayDetail(selectedDate);
+      });
+    });
+  }
+
+  function renderDayDetail(dateStr) {
+    const entry = history[dateStr];
+    if (!entry) {
+      $('day-detail').innerHTML = `<p class="empty-note">No check recorded yet for ${dateStr}.</p>`;
+      return;
+    }
+    const rows = entry.rules.map(r => `
+      <div class="rule-row">
+        <span>${fmtTime(r.start_time)}–${fmtTime(r.end_time)} · ${r.pool === 'small' ? 'Small' : 'Main'} Pool${r.label ? ' · ' + r.label : ''}</span>
+        <span class="tag ${r.ok ? 'ok' : 'bad'}">${r.ok ? 'OK' : `expected ${r.expected}, found ${r.actual}`}</span>
+      </div>`).join('');
+    $('day-detail').innerHTML = `
+      <h3>${dateStr} (${entry.weekday}) — checked ${new Date(entry.checked_at).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'})}</h3>
+      ${rows}
+      <p style="margin-top:0.7rem"><a href="https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar?start=${dateStr}&end=${dateStr}&location=1" target="_blank" rel="noopener" style="color:var(--blue);font-size:0.85rem">View on DaySmart →</a></p>
+    `;
+  }
+
+  function renderTrend() {
+    // Group tracked dates into ISO-ish Monday-start weeks, last 10 weeks with data.
+    const weekKey = (dateStr) => {
+      const d = new Date(dateStr + 'T00:00:00');
+      const day = (d.getDay() + 6) % 7;
+      d.setDate(d.getDate() - day);
+      return isoDate(d.getFullYear(), d.getMonth(), d.getDate());
+    };
+    const weeks = {};
+    Object.keys(history).forEach(d => {
+      const wk = weekKey(d);
+      weeks[wk] = weeks[wk] || { total: 0, mismatches: 0 };
+      weeks[wk].total++;
+      if (!history[d].rules.every(r => r.ok)) weeks[wk].mismatches++;
+    });
+    const sortedWeeks = Object.keys(weeks).sort().slice(-10);
+    if (!sortedWeeks.length) {
+      $('trend').innerHTML = '<p class="empty-note">No data yet.</p>';
+      return;
+    }
+    const maxMismatch = Math.max(1, ...sortedWeeks.map(w => weeks[w].mismatches));
+    $('trend').innerHTML = sortedWeeks.map(w => {
+      const m = weeks[w].mismatches;
+      const heightPct = Math.max(6, Math.round((m / maxMismatch) * 100));
+      const lbl = new Date(w + 'T00:00:00').toLocaleString([], { month: 'short', day: 'numeric' });
+      return `<div class="trend-bar">
+        <div class="bar ${m > 0 ? 'has-mismatch' : ''}" style="height:${m > 0 ? heightPct : 4}%" title="${m} mismatch day(s) week of ${w}"></div>
+        <div class="wk-lbl">${lbl}</div>
+      </div>`;
+    }).join('');
+  }
+
+  $('prev-month').addEventListener('click', () => {
+    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderCalendar();
+  });
+  $('next-month').addEventListener('click', () => {
+    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    renderCalendar();
+  });
+
+  (async function init() {
+    const now = new Date();
+    viewYear = now.getFullYear();
+    viewMonth = now.getMonth();
+    try {
+      await loadData();
+    } catch (e) {
+      $('stats').innerHTML = `<div class="stat warn"><div class="num" style="font-size:1rem">Failed to load</div><div class="lbl">${e.message}</div></div>`;
+    }
+    renderStats();
+    renderIssues();
+    renderCalendar();
+    renderTrend();
+  })();
+</script>
+</body>
+</html>

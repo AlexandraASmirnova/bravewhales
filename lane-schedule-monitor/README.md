@@ -8,6 +8,9 @@ and emails an alert if they aren't.
 **Manage the schedule with a form instead of editing JSON by hand:**
 👉 https://alexandraasmirnova.github.io/bravewhales/schedule-admin/
 
+**See pass/fail history over time, a calendar view, and open issues:**
+👉 https://alexandraasmirnova.github.io/bravewhales/schedule-dashboard/
+
 ## How it works
 
 - **Schedule**: a GitHub Actions workflow (`.github/workflows/lane-schedule-check.yml`)
@@ -37,15 +40,18 @@ and emails an alert if they aren't.
   it reuses the public Web3Forms access key already committed in
   `2026-2027/index.html`, which delivers to whatever address that key is
   registered to.
+- **History**: every run also updates `history.json` — one entry per
+  calendar date, overwritten each time that date gets re-checked, so it
+  always reflects the most recent, most-informed check for that day. The
+  workflow commits this file back to the repo automatically (using the
+  built-in `GITHUB_TOKEN`, no extra secret needed). `schedule-dashboard/`
+  reads it to show a calendar view, pass rate, and trend over time.
 
 ## Current rules
 
-| Weekday | Time | Pool | Lanes |
-|---|---|---|---|
-| Monday | 8:30–9:30 PM | Main Pool | 3 |
-
-Edit this with the **[admin page](https://alexandraasmirnova.github.io/bravewhales/schedule-admin/)**,
-or by hand in `schedule_rules.json`. Each entry looks like:
+See the **[admin page](https://alexandraasmirnova.github.io/bravewhales/schedule-admin/)**
+for the live, editable schedule, or `schedule_rules.json` directly. Each
+entry looks like:
 
 ```json
 {
@@ -89,6 +95,21 @@ The token is saved only in that browser's `localStorage` and is sent only
 to `api.github.com` — never to any other server. Use "Forget token" to
 remove it from the browser, or just revoke it on GitHub's token settings
 page.
+
+## Dashboard (history, calendar view, open issues)
+
+https://alexandraasmirnova.github.io/bravewhales/schedule-dashboard/
+
+A read-only static page (`schedule-dashboard/index.html`) that reads
+`history.json` and `schedule_rules.json` straight from GitHub (public,
+unauthenticated, no token needed) and shows:
+
+- Summary stats (days tracked, all-time pass rate, days with a mismatch,
+  last checked time)
+- A list of currently open issues (mismatches within a week of today)
+- A month calendar, color-coded green/red/pending/no-practice, click a day
+  for its rule-by-rule detail
+- A bar chart of mismatches per week over the last 10 weeks
 
 ## One-time setup (for the scheduled checker)
 

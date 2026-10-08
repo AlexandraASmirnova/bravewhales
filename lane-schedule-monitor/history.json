@@ -1,0 +1,1502 @@
+{
+  "2026-10-01": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-10-03": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-10-04": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-10-05": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-10-06": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-10-07": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-10-08": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-10-10": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-10-11": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-10-12": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": false,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-10-13": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-10-14": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-10-15": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-10-17": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 0,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-10-18": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-10-19": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-10-20": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-10-21": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-10-22": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-10-24": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": false,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-10-25": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": false,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-10-26": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": false,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-10-27": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-10-28": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-10-29": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-10-31": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-11-01": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-11-02": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-11-03": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-11-04": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-11-05": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-11-07": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-11-08": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-11-09": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-11-10": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-11-11": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-11-12": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-11-14": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-11-15": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-11-16": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-11-17": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-11-18": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-11-19": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-11-21": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-11-22": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-11-23": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  },
+  "2026-11-24": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      },
+      {
+        "actual": 0,
+        "end_time": "07:30",
+        "expected": 1,
+        "label": null,
+        "ok": false,
+        "pool": "small",
+        "start_time": "06:30"
+      }
+    ],
+    "weekday": "Tuesday"
+  },
+  "2026-11-25": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 2,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Wednesday"
+  },
+  "2026-11-26": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 0,
+        "end_time": "21:30",
+        "expected": 2,
+        "label": null,
+        "ok": false,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Thursday"
+  },
+  "2026-11-28": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "17:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "small",
+        "start_time": "16:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Saturday"
+  },
+  "2026-11-29": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 1,
+        "end_time": "12:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "11:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "13:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "12:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "14:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "13:00"
+      },
+      {
+        "actual": 3,
+        "end_time": "19:00",
+        "expected": 3,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "18:00"
+      },
+      {
+        "actual": 2,
+        "end_time": "20:00",
+        "expected": 2,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "19:00"
+      },
+      {
+        "actual": 1,
+        "end_time": "21:00",
+        "expected": 1,
+        "label": null,
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:00"
+      }
+    ],
+    "weekday": "Sunday"
+  },
+  "2026-11-30": {
+    "checked_at": "2026-10-08T02:05:16.848477+00:00",
+    "rules": [
+      {
+        "actual": 3,
+        "end_time": "21:30",
+        "expected": 3,
+        "label": "Monday evening practice",
+        "ok": true,
+        "pool": "main",
+        "start_time": "20:30"
+      }
+    ],
+    "weekday": "Monday"
+  }
+}

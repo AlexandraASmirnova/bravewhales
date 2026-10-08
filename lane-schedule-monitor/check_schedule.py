@@ -19,6 +19,10 @@ DaySmart sometimes books several adjacent lanes as a single event on a
 lanes), rather than one event per lane -- so lane counts are computed from
 the resource-area's name, not just by counting matching events.
 
+Every run also updates history.json (one entry per calendar date, upserted
+each time that date is re-checked) which schedule-dashboard/ reads to show
+pass/fail history over time.
+
 Environment variables:
   WEB3FORMS_ACCESS_KEY  Web3Forms access key to send mail with (defaults to
                          the same public key already used by this repo's
@@ -54,6 +58,8 @@ POOL_TIMEZONE = "America/Los_Angeles"
 LOOKAHEAD_DAYS = 7  # today + the next 6 days
 
 RULES_FILE = Path(__file__).parent / "schedule_rules.json"
+HISTORY_FILE = Path(__file__).parent / "history.json"
+HISTORY_RETENTION_DAYS = 400  # a bit over a year of history
 
 # `or` (not a dict default) because GitHub Actions sets env vars to "" for
 # unset secrets rather than leaving them unset.
@@ -130,6 +136,53 @@ def fetch_resource_area_index() -> dict[str, dict]:
 def load_rules() -> list[dict]:
     with open(RULES_FILE) as f:
         return json.load(f)
+
+
+# ---- History (for the dashboard) --------------------------------------------
+
+def load_history() -> dict:
+    if HISTORY_FILE.exists():
+        with open(HISTORY_FILE) as f:
+            return json.load(f)
+    return {}
+
+
+def save_history(history: dict) -> None:
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2, sort_keys=True)
+        f.write("\n")
+
+
+def update_history(history: dict, results: list[dict], checked_at: str) -> None:
+    """Upsert each checked date's latest result into history, keyed by ISO
+    date. A date gets overwritten every time it's re-checked (it's in the
+    7-day lookahead up to 7 times before it arrives), so each entry always
+    reflects the most recent, most-informed check for that day."""
+    by_date: dict[str, list[dict]] = {}
+    for r in results:
+        by_date.setdefault(r["date"].isoformat(), []).append(r)
+
+    for date_str, day_results in by_date.items():
+        history[date_str] = {
+            "checked_at": checked_at,
+            "weekday": day_results[0]["weekday"],
+            "rules": [
+                {
+                    "start_time": r["rule"]["start_time"],
+                    "end_time": r["rule"]["end_time"],
+                    "pool": r["rule"].get("pool", "main"),
+                    "label": r["rule"].get("label"),
+                    "expected": r["expected_count"],
+                    "actual": r["actual_count"],
+                    "ok": r["ok"],
+                }
+                for r in day_results
+            ],
+        }
+
+    cutoff = (date.today() - timedelta(days=HISTORY_RETENTION_DAYS)).isoformat()
+    for stale in [d for d in history if d < cutoff]:
+        del history[stale]
 
 
 def matching_lanes(events: list[dict], area_index: dict, rule: dict) -> list[dict]:
@@ -258,6 +311,10 @@ def main() -> None:
     for d in week_dates:
         for rule in rules_by_weekday.get(WEEKDAYS[d.weekday()], []):
             results.append(check_rule(events_by_date[d], area_index, rule, d))
+
+    history = load_history()
+    update_history(history, results, now_local.isoformat())
+    save_history(history)
 
     problems = [r for r in results if not r["ok"]]
 

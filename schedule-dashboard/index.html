@@ -91,14 +91,14 @@
   .rule-row .tag.ok { color: var(--ok); }
   .rule-row .tag.bad { color: var(--err); }
 
-  .issues-list { list-style: none; margin: 0; padding: 0; }
-  .issues-list li {
-    padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
-  }
-  .issues-list li:last-child { border-bottom: none; }
-  .issues-list .date { font-weight: 700; color: var(--navy); }
-  .issues-list a { color: var(--blue); font-size: 0.8rem; text-decoration: none; }
-  .issues-list a:hover { text-decoration: underline; }
+  .table-wrap { overflow-x: auto; }
+  .issues-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .issues-table th, .issues-table td { text-align: left; padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .issues-table th { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .issues-table tr:last-child td { border-bottom: none; }
+  .issues-table .dow { color: var(--muted); font-size: 0.78rem; }
+  .issues-table a { color: var(--blue); font-size: 0.8rem; text-decoration: none; }
+  .issues-table a:hover { text-decoration: underline; }
   .empty-note { color: var(--muted); font-style: italic; font-size: 0.88rem; }
   .loading { color: var(--muted); font-size: 0.9rem; }
 </style>
@@ -189,15 +189,33 @@
       return;
     }
 
-    $('issues').innerHTML = '<ul class="issues-list">' + issues.map(d => {
+    const rows = [];
+    issues.forEach(d => {
       const entry = history[d];
-      const bad = entry.rules.filter(r => !r.ok);
-      const details = bad.map(r =>
-        `${fmtTime(r.start_time)}–${fmtTime(r.end_time)} ${r.pool === 'small' ? 'Small' : 'Main'} Pool: expected ${r.expected}, found ${r.actual}`
-      ).join('; ');
-      return `<li><span class="date">${d} (${entry.weekday})</span> — ${details}
-        <br><a href="https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar?start=${d}&end=${d}&location=1" target="_blank" rel="noopener">View on DaySmart →</a></li>`;
-    }).join('') + '</ul>';
+      entry.rules.filter(r => !r.ok).forEach(r => {
+        rows.push({ date: d, weekday: entry.weekday, rule: r });
+      });
+    });
+
+    const rowsHtml = rows.map(({ date, weekday, rule: r }) => `
+      <tr>
+        <td>${date}<br><span class="dow">${weekday}</span></td>
+        <td>${fmtTime(r.start_time)}–${fmtTime(r.end_time)}</td>
+        <td>${r.pool === 'small' ? 'Small' : 'Main'} Pool</td>
+        <td>${r.expected}</td>
+        <td>${r.actual}</td>
+        <td><a href="https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar?start=${date}&end=${date}&location=1" target="_blank" rel="noopener">View on DaySmart →</a></td>
+      </tr>`).join('');
+
+    $('issues').innerHTML = `
+      <div class="table-wrap">
+        <table class="issues-table">
+          <thead>
+            <tr><th>Date</th><th>Time</th><th>Pool</th><th>Expected</th><th>Found</th><th></th></tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>`;
   }
 
   function renderCalendar() {

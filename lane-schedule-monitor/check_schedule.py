@@ -32,7 +32,6 @@ Environment variables:
                          only (default: smirnovaae@gmail.com) -- actual
                          delivery address is controlled by the Web3Forms key
   CHECK_DATE             Override "today" with an explicit YYYY-MM-DD (for testing)
-  FORCE_RUN               If "true", skip the "only run near 5:30am local" time guard
 """
 
 from __future__ import annotations
@@ -264,17 +263,6 @@ def calendar_url(target_date: date) -> str:
 def main() -> None:
     tz = ZoneInfo(POOL_TIMEZONE)
     now_local = datetime.now(tz)
-
-    force_run = os.environ.get("FORCE_RUN", "").lower() == "true"
-    if not force_run and now_local.hour != 5:
-        # The workflow fires at two different UTC times to cover both sides of
-        # DST; only the one that currently lands at ~5:xxam Pacific should do
-        # the real check, so the other near-miss run exits quietly.
-        print(
-            f"Current time in {POOL_TIMEZONE} is {now_local:%Y-%m-%d %H:%M} "
-            "-- not the scheduled ~5:30am run, skipping."
-        )
-        return
 
     start_date = date.fromisoformat(os.environ["CHECK_DATE"]) if os.environ.get("CHECK_DATE") else now_local.date()
     end_date = start_date + timedelta(days=LOOKAHEAD_DAYS - 1)

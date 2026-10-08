@@ -2,21 +2,19 @@ name: Lane schedule check
 
 on:
   schedule:
-    # 5:30am Pacific lands at two different UTC times depending on DST.
-    # Both fire every day; check_schedule.py only does the real check on
-    # whichever one currently works out to ~5:xxam Pacific, and no-ops on
-    # the other. This keeps the job correct year-round with plain cron.
-    - cron: "30 12 * * *"  # 5:30am PDT (UTC-7, roughly Mar-Nov)
-    - cron: "30 13 * * *"  # 5:30am PST (UTC-8, roughly Nov-Mar)
+    # 13:00 UTC = 5:00am PST / 6:00am PDT -- within half an hour of 5:30am
+    # Pacific either way, with a single cron entry (see note below on why
+    # not two). GitHub Actions scheduled runs are also "best effort" and
+    # can be delayed by hours, especially for low-traffic repos -- the
+    # script runs unconditionally whenever this actually fires rather than
+    # checking the clock, so a delayed run still checks instead of silently
+    # doing nothing.
+    - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
       check_date:
         description: "Date to check (YYYY-MM-DD). Leave blank for today."
         required: false
-      force_run:
-        description: "Run the check even if it's not ~5:30am Pacific right now"
-        type: boolean
-        default: true
 
 permissions:
   contents: write  # needed to commit history.json back to the repo
@@ -41,7 +39,6 @@ jobs:
           WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
           CHECK_DATE: ${{ github.event.inputs.check_date }}
-          FORCE_RUN: ${{ github.event.inputs.force_run }}
         run: python lane-schedule-monitor/check_schedule.py
 
       - name: Commit updated history

@@ -46,18 +46,6 @@
   }
   .card h2 { font-size: 1.05rem; color: var(--navy); margin: 0 0 0.9rem; }
 
-  .stats { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .stat {
-    flex: 1 1 150px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 1rem 1.1rem;
-    box-shadow: 0 2px 10px rgba(11,46,82,0.08);
-  }
-  .stat .num { font-family: Georgia, serif; font-size: 1.7rem; color: var(--navy); line-height: 1; }
-  .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .stat.warn .num { color: var(--err); }
-
   .cal-wrap { max-width: 320px; margin: 0 auto; }
   .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
   .cal-head button {
@@ -103,12 +91,6 @@
   .rule-row .tag.ok { color: var(--ok); }
   .rule-row .tag.bad { color: var(--err); }
 
-  .trend-bars { display: flex; gap: 6px; height: 90px; margin-top: 0.6rem; }
-  .trend-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
-  .trend-bar .bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--border); position: relative; }
-  .trend-bar .bar.has-mismatch { background: var(--err); }
-  .trend-bar .wk-lbl { font-size: 0.65rem; color: var(--muted); }
-
   .issues-list { list-style: none; margin: 0; padding: 0; }
   .issues-list li {
     padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
@@ -128,10 +110,6 @@
       <h1>Lane Schedule — Dashboard</h1>
     </div>
     <a href="../schedule-admin/">Edit schedule →</a>
-  </div>
-
-  <div class="stats" id="stats">
-    <div class="loading">Loading…</div>
   </div>
 
   <div class="card">
@@ -155,11 +133,6 @@
   <div class="card">
     <h2 id="issues-heading">Issues</h2>
     <div id="issues"><p class="loading">Loading…</p></div>
-  </div>
-
-  <div class="card">
-    <h2>Mismatches per week (last 10 weeks)</h2>
-    <div class="trend-bars" id="trend"></div>
   </div>
 </main>
 
@@ -200,24 +173,6 @@
     history = histRes.ok ? await histRes.json() : {};
     const rules = rulesRes.ok ? await rulesRes.json() : [];
     weekdaysWithRules = new Set(rules.map(r => r.weekday));
-  }
-
-  function renderStats() {
-    const dates = Object.keys(history);
-    let totalRules = 0, okRules = 0;
-    dates.forEach(d => history[d].rules.forEach(r => { totalRules++; if (r.ok) okRules++; }));
-    const passRate = totalRules ? Math.round((okRules / totalRules) * 100) : 0;
-    const mismatchDays = dates.filter(d => !history[d].rules.every(r => r.ok)).length;
-    const lastChecked = dates.length
-      ? dates.map(d => history[d].checked_at).sort().slice(-1)[0]
-      : null;
-
-    $('stats').innerHTML = `
-      <div class="stat"><div class="num">${dates.length}</div><div class="lbl">Days tracked</div></div>
-      <div class="stat"><div class="num">${passRate}%</div><div class="lbl">Pass rate (all-time)</div></div>
-      <div class="stat ${mismatchDays ? 'warn' : ''}"><div class="num">${mismatchDays}</div><div class="lbl">Days with a mismatch</div></div>
-      <div class="stat"><div class="num" style="font-size:1rem">${lastChecked ? new Date(lastChecked).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}) : '—'}</div><div class="lbl">Last checked</div></div>
-    `;
   }
 
   function renderIssues() {
@@ -290,38 +245,6 @@
     `;
   }
 
-  function renderTrend() {
-    // Group tracked dates into ISO-ish Monday-start weeks, last 10 weeks with data.
-    const weekKey = (dateStr) => {
-      const d = new Date(dateStr + 'T00:00:00');
-      const day = (d.getDay() + 6) % 7;
-      d.setDate(d.getDate() - day);
-      return isoDate(d.getFullYear(), d.getMonth(), d.getDate());
-    };
-    const weeks = {};
-    Object.keys(history).forEach(d => {
-      const wk = weekKey(d);
-      weeks[wk] = weeks[wk] || { total: 0, mismatches: 0 };
-      weeks[wk].total++;
-      if (!history[d].rules.every(r => r.ok)) weeks[wk].mismatches++;
-    });
-    const sortedWeeks = Object.keys(weeks).sort().slice(-10);
-    if (!sortedWeeks.length) {
-      $('trend').innerHTML = '<p class="empty-note">No data yet.</p>';
-      return;
-    }
-    const maxMismatch = Math.max(1, ...sortedWeeks.map(w => weeks[w].mismatches));
-    $('trend').innerHTML = sortedWeeks.map(w => {
-      const m = weeks[w].mismatches;
-      const heightPct = Math.max(6, Math.round((m / maxMismatch) * 100));
-      const lbl = new Date(w + 'T00:00:00').toLocaleString([], { month: 'short', day: 'numeric' });
-      return `<div class="trend-bar">
-        <div class="bar ${m > 0 ? 'has-mismatch' : ''}" style="height:${m > 0 ? heightPct : 4}%" title="${m} mismatch day(s) week of ${w}"></div>
-        <div class="wk-lbl">${lbl}</div>
-      </div>`;
-    }).join('');
-  }
-
   $('prev-month').addEventListener('click', () => {
     viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
     selectedDate = null;
@@ -344,12 +267,11 @@
     try {
       await loadData();
     } catch (e) {
-      $('stats').innerHTML = `<div class="stat warn"><div class="num" style="font-size:1rem">Failed to load</div><div class="lbl">${e.message}</div></div>`;
+      $('issues').innerHTML = `<p class="empty-note">Failed to load: ${e.message}</p>`;
+      return;
     }
-    renderStats();
     renderIssues();
     renderCalendar();
-    renderTrend();
   })();
 </script>
 </body>

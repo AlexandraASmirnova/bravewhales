@@ -46,7 +46,7 @@ and emails an alert if they aren't.
   always reflects the most recent, most-informed check for that day. The
   workflow commits this file back to the repo automatically (using the
   built-in `GITHUB_TOKEN`, no extra secret needed). `schedule-dashboard/`
-  reads it to show a calendar view, pass rate, and trend over time.
+  reads it to show a calendar view and open issues.
 
 ## Current rules
 
@@ -105,13 +105,10 @@ A read-only static page (`schedule-dashboard/index.html`) that reads
 `history.json` and `schedule_rules.json` straight from GitHub (public,
 unauthenticated, no token needed) and shows:
 
-- Summary stats (days tracked, all-time pass rate, days with a mismatch,
-  last checked time)
-- "Issues in [Month]" — every mismatch in whichever month the calendar
-  below is showing, updates as you navigate months
 - A month calendar, color-coded green/red/pending/no-practice, click a day
   for its rule-by-rule detail
-- A bar chart of mismatches per week over the last 10 weeks
+- "Issues in [Month]" — every mismatch in whichever month the calendar
+  above is showing, updates as you navigate months
 
 ## One-time setup (for the scheduled checker to actually send email)
 

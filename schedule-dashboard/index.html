@@ -28,7 +28,7 @@
     line-height: 1.5;
   }
   main { max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-  .topnav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+  .topnav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.75rem; }
   h1 {
     font-family: Georgia, "Times New Roman", serif;
     color: var(--navy);
@@ -37,7 +37,6 @@
   }
   .topnav a { color: var(--blue); font-size: 0.85rem; font-weight: 600; text-decoration: none; }
   .topnav a:hover { text-decoration: underline; }
-  .subtitle { color: var(--muted); margin: 0 0 1.75rem; font-size: 0.95rem; }
   .card {
     background: #fff;
     border-radius: 12px;
@@ -59,22 +58,23 @@
   .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .stat.warn .num { color: var(--err); }
 
-  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+  .cal-wrap { max-width: 320px; margin: 0 auto; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
   .cal-head button {
-    background: var(--blue-light); color: var(--navy); border: none; border-radius: 8px;
-    padding: 0.4rem 0.8rem; font-weight: 700; cursor: pointer; font-size: 1rem;
+    background: var(--blue-light); color: var(--navy); border: none; border-radius: 6px;
+    padding: 0.25rem 0.6rem; font-weight: 700; cursor: pointer; font-size: 0.9rem;
   }
   .cal-head button:hover { background: #d7edf5; }
-  .cal-month { font-weight: 700; color: var(--navy); font-size: 1.05rem; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .cal-dow { text-align: center; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; padding-bottom: 2px; }
+  .cal-month { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { text-align: center; font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.02em; padding-bottom: 2px; }
   .cal-cell {
     aspect-ratio: 1;
-    border-radius: 8px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 0.68rem;
     font-weight: 600;
     cursor: default;
     background: #f3f8fb;
@@ -87,7 +87,7 @@
   .cal-cell.pending { background: #fff; border: 1px dashed var(--pending); color: var(--pending); }
   .cal-cell.ok, .cal-cell.mismatch { cursor: pointer; }
   .cal-cell.selected { outline: 2px solid var(--navy); outline-offset: 2px; }
-  .cal-legend { display: flex; gap: 1.1rem; margin-top: 0.9rem; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+  .cal-legend { display: flex; gap: 0.6rem 0.9rem; margin-top: 0.7rem; font-size: 0.66rem; color: var(--muted); flex-wrap: wrap; justify-content: center; }
   .cal-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
   .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
   .swatch.ok { background: var(--ok-bg); border: 1px solid var(--ok); }
@@ -126,7 +126,6 @@
   <div class="topnav">
     <div>
       <h1>Lane Schedule — Dashboard</h1>
-      <p class="subtitle">Pass/fail history for Brave Whales' lane bookings at Juanita Aquatics Center.</p>
     </div>
     <a href="../schedule-admin/">Edit schedule →</a>
   </div>
@@ -136,24 +135,26 @@
   </div>
 
   <div class="card">
-    <h2>Currently open issues</h2>
-    <div id="issues"><p class="loading">Loading…</p></div>
+    <div class="cal-wrap">
+      <div class="cal-head">
+        <button id="prev-month" aria-label="Previous month">‹</button>
+        <span class="cal-month" id="cal-month-label"></span>
+        <button id="next-month" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend">
+        <span><i class="swatch ok"></i> OK</span>
+        <span><i class="swatch mismatch"></i> mismatch</span>
+        <span><i class="swatch pending"></i> not checked</span>
+        <span><i class="swatch none"></i> none scheduled</span>
+      </div>
+    </div>
+    <div id="day-detail"></div>
   </div>
 
   <div class="card">
-    <div class="cal-head">
-      <button id="prev-month" aria-label="Previous month">‹</button>
-      <span class="cal-month" id="cal-month-label"></span>
-      <button id="next-month" aria-label="Next month">›</button>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
-    <div class="cal-legend">
-      <span><i class="swatch ok"></i> all lanes correct</span>
-      <span><i class="swatch mismatch"></i> mismatch found</span>
-      <span><i class="swatch pending"></i> not checked yet</span>
-      <span><i class="swatch none"></i> no practice scheduled</span>
-    </div>
-    <div id="day-detail"></div>
+    <h2 id="issues-heading">Issues</h2>
+    <div id="issues"><p class="loading">Loading…</p></div>
   </div>
 
   <div class="card">
@@ -220,20 +221,16 @@
   }
 
   function renderIssues() {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const from = new Date(today); from.setDate(from.getDate() - 7);
-    const to = new Date(today); to.setDate(to.getDate() + 7);
+    const monthPrefix = `${viewYear}-${pad(viewMonth + 1)}-`;
+    const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString([], { month: 'long', year: 'numeric' });
+    $('issues-heading').textContent = `Issues in ${monthLabel}`;
 
     const issues = Object.keys(history)
-      .filter(d => {
-        const dd = new Date(d + 'T00:00:00');
-        return dd >= from && dd <= to && !history[d].rules.every(r => r.ok);
-      })
+      .filter(d => d.startsWith(monthPrefix) && !history[d].rules.every(r => r.ok))
       .sort();
 
     if (!issues.length) {
-      $('issues').innerHTML = '<p class="empty-note">No open mismatches in the surrounding two weeks. 🎉</p>';
+      $('issues').innerHTML = `<p class="empty-note">No mismatches found in ${monthLabel}. 🎉</p>`;
       return;
     }
 
@@ -327,11 +324,17 @@
 
   $('prev-month').addEventListener('click', () => {
     viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    selectedDate = null;
     renderCalendar();
+    renderIssues();
+    $('day-detail').innerHTML = '';
   });
   $('next-month').addEventListener('click', () => {
     viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    selectedDate = null;
     renderCalendar();
+    renderIssues();
+    $('day-detail').innerHTML = '';
   });
 
   (async function init() {

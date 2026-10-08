@@ -309,6 +309,11 @@ def main() -> None:
 
     results = []
     for d in week_dates:
+        if not events_by_date[d]:
+            # DaySmart hasn't published *anything* for this date yet (facilities
+            # only publish a few months out) -- that's "not checked yet", not a
+            # mismatch, so skip it rather than falsely flag every rule as missing.
+            continue
         for rule in rules_by_weekday.get(WEEKDAYS[d.weekday()], []):
             results.append(check_rule(events_by_date[d], area_index, rule, d))
 

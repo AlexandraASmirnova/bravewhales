@@ -14,9 +14,10 @@ and emails an alert if they aren't.
 ## How it works
 
 - **Schedule**: a GitHub Actions workflow (`.github/workflows/lane-schedule-check.yml`)
-  runs daily at ~5:30am Pacific (two cron entries cover both sides of
-  daylight saving time; the script itself figures out which one is the real
-  5:30am run and no-ops on the other).
+  runs daily at ~5am/6am Pacific (one cron entry, 13:00 UTC; it drifts an
+  hour across daylight saving but that doesn't matter here). The script runs
+  unconditionally whenever triggered rather than checking the clock, since
+  GitHub's scheduled runs are "best effort" and can be delayed by hours.
 - **Data source**: the DaySmart calendar page is a web app that calls a
   public, unauthenticated JSON API
   (`https://api.daysmartrecreation.com/v1/events`) to list events. No login
@@ -34,12 +35,12 @@ and emails an alert if they aren't.
     matching events.
 - **Alerting**: if any day's rule doesn't match (missing booking, wrong lane
   count, wrong pool, wrong time) — or if the DaySmart API can't be reached at
-  all — one summary email covering the whole week is sent via
-  [Web3Forms](https://web3forms.com), the same free service this repo's
-  flyer contact form already uses. No email password or app key to manage:
-  it reuses the public Web3Forms access key already committed in
-  `2026-2027/index.html`, which delivers to whatever address that key is
-  registered to.
+  all — one summary email covering the whole week is sent via Gmail SMTP
+  (requires a one-time setup, see below). [Web3Forms](https://web3forms.com)
+  (used by this repo's flyer contact form) was tried first since it was
+  already set up here, but its free tier only accepts requests sent from a
+  browser — a server-side request from GitHub Actions gets a 403 ("Pro plan
+  is required"). Gmail SMTP has no such restriction.
 - **History**: every run also updates `history.json` — one entry per
   calendar date, overwritten each time that date gets re-checked, so it
   always reflects the most recent, most-informed check for that day. The
@@ -106,35 +107,44 @@ unauthenticated, no token needed) and shows:
 
 - Summary stats (days tracked, all-time pass rate, days with a mismatch,
   last checked time)
-- A list of currently open issues (mismatches within a week of today)
+- "Issues in [Month]" — every mismatch in whichever month the calendar
+  below is showing, updates as you navigate months
 - A month calendar, color-coded green/red/pending/no-practice, click a day
   for its rule-by-rule detail
 - A bar chart of mismatches per week over the last 10 weeks
 
-## One-time setup (for the scheduled checker)
+## One-time setup (for the scheduled checker to actually send email)
 
-Nothing is required — with no extra configuration the workflow already
-sends mail via the Web3Forms key the flyer page uses. Optional repo secrets
-if you ever want to change that (**Settings → Secrets and variables →
-Actions → New repository secret**):
+Add two repo secrets (**Settings → Secrets and variables → Actions → New
+repository secret**):
 
 | Secret | Value |
 |---|---|
-| `WEB3FORMS_ACCESS_KEY` | A different [Web3Forms](https://web3forms.com) access key, if you want alerts to go to a different address than the flyer form does |
-| `NOTIFY_EMAIL` | Cosmetic only — who the alert email is *addressed to* in its "to" display field. Actual delivery is controlled by the Web3Forms key above, not this. |
+| `GMAIL_USER` | The Gmail address to send *from*, e.g. `smirnovaae@gmail.com` |
+| `GMAIL_APP_PASSWORD` | A 16-character [Gmail App Password](https://myaccount.google.com/apppasswords) for that account (not your normal Gmail password — requires 2-Step Verification to be enabled first) |
+
+Optional:
+
+| Secret | Value |
+|---|---|
+| `NOTIFY_EMAIL` | Who gets the alert (defaults to `smirnovaae@gmail.com` if unset) |
+
+Without `GMAIL_USER`/`GMAIL_APP_PASSWORD` set, the script still runs the
+check and logs what it *would* have emailed to the workflow's log output —
+useful for a first test run before wiring up email.
 
 ## Testing it manually
 
 Go to **Actions → Lane schedule check → Run workflow** in GitHub. You can
 optionally pass a specific `check_date` (e.g. `2026-10-06`, a Monday is in
 the following week from here) to test against a known week instead of the
-real "today". `force_run` defaults to `true` for manual runs so it ignores
-the "only run near 5:30am" guard.
+real "today".
 
 To run it locally:
 
 ```bash
 cd lane-schedule-monitor
 pip install -r requirements.txt
-CHECK_DATE=2026-10-06 FORCE_RUN=true python check_schedule.py
+GMAIL_USER=you@gmail.com GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx \
+CHECK_DATE=2026-10-06 python check_schedule.py
 ```

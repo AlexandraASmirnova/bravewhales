@@ -7,7 +7,12 @@ today through the next 6 days (a full week ahead), and compares the lanes
 booked under "Brave Whales" against the expected schedule in
 schedule_rules.json. If anything doesn't match (missing lanes, wrong lane
 count, wrong pool, or wrong time) -- or if the check itself fails -- a
-single summary email is sent via Web3Forms.
+single summary email is sent via Gmail SMTP.
+
+(Web3Forms -- used by this repo's flyer contact form -- was tried first
+since it's already set up here, but its free tier only accepts requests
+from a browser; a server-to-server POST from GitHub Actions gets a 403
+"Pro plan is required". Gmail SMTP has no such restriction.)
 
 No login/password is needed: the calendar page at
   https://apps.daysmartrecreation.com/dash/x/waveaquatics/calendar
@@ -24,13 +29,9 @@ each time that date is re-checked) which schedule-dashboard/ reads to show
 pass/fail history over time.
 
 Environment variables:
-  WEB3FORMS_ACCESS_KEY  Web3Forms access key to send mail with (defaults to
-                         the same public key already used by this repo's
-                         contact form in 2026-2027/index.html, which
-                         delivers to the email that key is registered to)
-  NOTIFY_EMAIL           Who the alert is addressed to, for display purposes
-                         only (default: smirnovaae@gmail.com) -- actual
-                         delivery address is controlled by the Web3Forms key
+  GMAIL_USER             Gmail address to send FROM (required to actually email)
+  GMAIL_APP_PASSWORD     Gmail App Password for that address (required to actually email)
+  NOTIFY_EMAIL           Who to send the alert to (default: smirnovaae@gmail.com)
   CHECK_DATE             Override "today" with an explicit YYYY-MM-DD (for testing)
 """
 
@@ -39,8 +40,11 @@ from __future__ import annotations
 import json
 import os
 import re
+import smtplib
+import ssl
 import sys
 from datetime import date, datetime, timedelta
+from email.mime.text import MIMEText
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -62,7 +66,8 @@ HISTORY_RETENTION_DAYS = 400  # a bit over a year of history
 
 # `or` (not a dict default) because GitHub Actions sets env vars to "" for
 # unset secrets rather than leaving them unset.
-WEB3FORMS_ACCESS_KEY = os.environ.get("WEB3FORMS_ACCESS_KEY") or "aa8fd2da-7204-4819-a418-5bbe5706fe62"
+GMAIL_USER = os.environ.get("GMAIL_USER")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD")
 NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL") or "smirnovaae@gmail.com"
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -236,19 +241,22 @@ def check_rule(events_on_date: list[dict], area_index: dict, rule: dict, target_
 # ---- Notification -----------------------------------------------------------
 
 def send_email(subject: str, message: str) -> None:
-    payload = {
-        "access_key": WEB3FORMS_ACCESS_KEY,
-        "subject": subject,
-        "message": message,
-        "email": NOTIFY_EMAIL,
-        "from_name": "Lane Schedule Monitor",
-    }
-    resp = requests.post("https://api.web3forms.com/submit", json=payload, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
-    if not data.get("success"):
-        raise RuntimeError(f"Web3Forms reported failure: {data}")
-    print("Notification email sent via Web3Forms.")
+    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
+        print("GMAIL_USER / GMAIL_APP_PASSWORD not set -- cannot send email.", file=sys.stderr)
+        print("---- Email that would have been sent ----", file=sys.stderr)
+        print(f"Subject: {subject}\n\n{message}", file=sys.stderr)
+        return
+
+    msg = MIMEText(message)
+    msg["Subject"] = subject
+    msg["From"] = GMAIL_USER
+    msg["To"] = NOTIFY_EMAIL
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+        server.sendmail(GMAIL_USER, [NOTIFY_EMAIL], msg.as_string())
+    print(f"Notification email sent to {NOTIFY_EMAIL}.")
 
 
 def calendar_url(target_date: date) -> str:

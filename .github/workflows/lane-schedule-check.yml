@@ -3,12 +3,11 @@ name: Lane schedule check
 on:
   schedule:
     # 13:00 UTC = 5:00am PST / 6:00am PDT -- within half an hour of 5:30am
-    # Pacific either way, with a single cron entry (see note below on why
-    # not two). GitHub Actions scheduled runs are also "best effort" and
-    # can be delayed by hours, especially for low-traffic repos -- the
-    # script runs unconditionally whenever this actually fires rather than
-    # checking the clock, so a delayed run still checks instead of silently
-    # doing nothing.
+    # Pacific either way. A single cron entry, and the script runs
+    # unconditionally whenever triggered rather than checking the clock --
+    # GitHub Actions scheduled runs are "best effort" and can be delayed by
+    # hours (seen firsthand: a ~6-hour delay on this repo's first day), so a
+    # delayed run still checks instead of silently doing nothing.
     - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
@@ -34,9 +33,8 @@ jobs:
 
       - name: Run lane schedule check
         env:
-          # Optional overrides -- the script already has working defaults
-          # (the same Web3Forms key this repo's contact form uses).
-          WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
           CHECK_DATE: ${{ github.event.inputs.check_date }}
         run: python lane-schedule-monitor/check_schedule.py

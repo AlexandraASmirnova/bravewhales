@@ -303,7 +303,7 @@
     "weekday": "Monday"
   },
   "2026-10-13": {
-    "checked_at": "2026-10-12T14:38:05.638428-07:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
         "actual": 2,
@@ -327,7 +327,7 @@
     "weekday": "Tuesday"
   },
   "2026-10-14": {
-    "checked_at": "2026-10-12T14:38:05.638428-07:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
         "actual": 2,
@@ -342,7 +342,7 @@
     "weekday": "Wednesday"
   },
   "2026-10-15": {
-    "checked_at": "2026-10-12T14:38:05.638428-07:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
         "actual": 2,
@@ -357,7 +357,7 @@
     "weekday": "Thursday"
   },
   "2026-10-17": {
-    "checked_at": "2026-10-12T14:38:05.638428-07:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
         "actual": 0,
@@ -399,23 +399,23 @@
     "weekday": "Saturday"
   },
   "2026-10-18": {
-    "checked_at": "2026-10-12T14:38:05.638428-07:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
-        "actual": 2,
+        "actual": 1,
         "end_time": "12:00",
         "expected": 1,
         "label": null,
-        "ok": false,
+        "ok": true,
         "pool": "main",
         "start_time": "11:00"
       },
       {
-        "actual": 2,
+        "actual": 1,
         "end_time": "13:00",
         "expected": 1,
         "label": null,
-        "ok": false,
+        "ok": true,
         "pool": "main",
         "start_time": "12:00"
       },
@@ -459,7 +459,7 @@
     "weekday": "Sunday"
   },
   "2026-10-19": {
-    "checked_at": "2026-10-08T02:39:16.256051+00:00",
+    "checked_at": "2026-10-13T12:47:05.488974-07:00",
     "rules": [
       {
         "actual": 3,

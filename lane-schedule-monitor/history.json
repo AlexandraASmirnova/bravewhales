@@ -684,7 +684,7 @@
     "weekday": "Wednesday"
   },
   "2026-10-29": {
-    "checked_at": "2026-10-28T11:42:10.444288-07:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 2,
@@ -699,7 +699,7 @@
     "weekday": "Thursday"
   },
   "2026-10-31": {
-    "checked_at": "2026-10-28T11:42:10.444288-07:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 1,
@@ -711,29 +711,29 @@
         "start_time": "16:00"
       },
       {
-        "actual": 3,
+        "actual": 1,
         "end_time": "19:00",
         "expected": 3,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "18:00"
       },
       {
-        "actual": 2,
+        "actual": 1,
         "end_time": "20:00",
         "expected": 2,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "19:00"
       },
       {
-        "actual": 1,
+        "actual": 0,
         "end_time": "21:00",
         "expected": 1,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "20:00"
       }
@@ -741,7 +741,7 @@
     "weekday": "Saturday"
   },
   "2026-11-01": {
-    "checked_at": "2026-10-28T11:42:10.444288-07:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 1,
@@ -801,7 +801,7 @@
     "weekday": "Sunday"
   },
   "2026-11-02": {
-    "checked_at": "2026-10-28T11:42:10.444288-07:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 3,
@@ -816,7 +816,7 @@
     "weekday": "Monday"
   },
   "2026-11-03": {
-    "checked_at": "2026-10-28T11:42:10.444288-07:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 2,
@@ -840,7 +840,7 @@
     "weekday": "Tuesday"
   },
   "2026-11-04": {
-    "checked_at": "2026-10-08T02:39:16.256051+00:00",
+    "checked_at": "2026-10-29T11:50:36.338452-07:00",
     "rules": [
       {
         "actual": 2,

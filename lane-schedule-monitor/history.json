@@ -1143,7 +1143,7 @@
     "weekday": "Sunday"
   },
   "2026-11-16": {
-    "checked_at": "2026-11-15T11:17:34.276648-08:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
         "actual": 0,
@@ -1158,7 +1158,7 @@
     "weekday": "Monday"
   },
   "2026-11-17": {
-    "checked_at": "2026-11-15T11:17:34.276648-08:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
         "actual": 0,
@@ -1182,7 +1182,7 @@
     "weekday": "Tuesday"
   },
   "2026-11-18": {
-    "checked_at": "2026-11-15T11:17:34.276648-08:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
         "actual": 0,
@@ -1197,7 +1197,7 @@
     "weekday": "Wednesday"
   },
   "2026-11-19": {
-    "checked_at": "2026-11-15T11:17:34.276648-08:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
         "actual": 0,
@@ -1212,7 +1212,7 @@
     "weekday": "Thursday"
   },
   "2026-11-21": {
-    "checked_at": "2026-11-15T11:17:34.276648-08:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
         "actual": 0,
@@ -1254,59 +1254,59 @@
     "weekday": "Saturday"
   },
   "2026-11-22": {
-    "checked_at": "2026-10-08T02:39:16.256051+00:00",
+    "checked_at": "2026-11-16T14:46:47.383084-08:00",
     "rules": [
       {
-        "actual": 1,
+        "actual": 0,
         "end_time": "12:00",
         "expected": 1,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "11:00"
       },
       {
-        "actual": 1,
+        "actual": 0,
         "end_time": "13:00",
         "expected": 1,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "12:00"
       },
       {
-        "actual": 2,
+        "actual": 0,
         "end_time": "14:00",
         "expected": 2,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "13:00"
       },
       {
-        "actual": 3,
+        "actual": 0,
         "end_time": "19:00",
         "expected": 3,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "18:00"
       },
       {
-        "actual": 2,
+        "actual": 0,
         "end_time": "20:00",
         "expected": 2,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "19:00"
       },
       {
-        "actual": 1,
+        "actual": 0,
         "end_time": "21:00",
         "expected": 1,
         "label": null,
-        "ok": true,
+        "ok": false,
         "pool": "main",
         "start_time": "20:00"
       }
